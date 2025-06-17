@@ -4,6 +4,14 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+
+    themes = {
+      url = "github:mow44/themes/main";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
+    };
   };
 
   outputs =
@@ -11,6 +19,7 @@
       self,
       flake-utils,
       nixpkgs,
+      themes,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -18,6 +27,9 @@
       let
         pkgs = import nixpkgs { inherit system; };
         uxn = pkgs.uxn;
+        sourceFile = import ./source.nix {
+          inherit pkgs themes;
+        };
       in
       {
         packages = {
@@ -25,16 +37,15 @@
             with pkgs;
             stdenv.mkDerivation {
               name = "catclock";
-              version = "1.0";
 
-              nativeBuildInputs = with pkgs; [
+              nativeBuildInputs = [
                 uxn
               ];
 
               src = self;
 
               buildPhase = ''
-                uxnasm catclock.tal catclock.rom
+                uxnasm ${sourceFile} catclock.rom
               '';
 
               installPhase = ''
