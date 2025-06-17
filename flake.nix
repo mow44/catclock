@@ -4,14 +4,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-
-    themes = {
-      url = "github:mow44/themes/main";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
-      };
-    };
   };
 
   outputs =
@@ -19,7 +11,6 @@
       self,
       flake-utils,
       nixpkgs,
-      themes,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -47,7 +38,6 @@
 
               installPhase = ''
                 mkdir -p $out/bin
-                cp ${themes.packages.x86_64-linux.default}/theme $out/bin
                 cp catclock.rom $out/bin
               '';
             };
