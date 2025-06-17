@@ -27,9 +27,6 @@
       let
         pkgs = import nixpkgs { inherit system; };
         uxn = pkgs.uxn;
-        sourceFile = import ./source.nix {
-          inherit pkgs themes;
-        };
       in
       {
         packages = {
@@ -45,11 +42,12 @@
               src = self;
 
               buildPhase = ''
-                uxnasm ${sourceFile} catclock.rom
+                uxnasm catclock.tal catclock.rom
               '';
 
               installPhase = ''
                 mkdir -p $out/bin
+                cp ${themes.packages.x86_64-linux.default}/theme $out/bin
                 cp catclock.rom $out/bin
               '';
             };

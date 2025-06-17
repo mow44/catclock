@@ -169,7 +169,7 @@
 	.File/success-lb DEI ?{ !theme/<reset> }
 	[ LIT2 &r $2 ] [ LIT2 &g $2 ] [ LIT2 &b $2 ] !theme/<set>
 
-	&path ".theme $1
+	&path "theme $1
 
 @meta $1
 	( name ) "Catclock 0a
