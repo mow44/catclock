@@ -8,7 +8,6 @@
 
   outputs =
     {
-      self,
       flake-utils,
       nixpkgs,
       ...
@@ -17,7 +16,6 @@
       system:
       let
         pkgs = import nixpkgs { inherit system; };
-        uxn = pkgs.uxn;
       in
       {
         packages = {
@@ -26,11 +24,23 @@
             stdenv.mkDerivation {
               name = "catclock";
 
-              nativeBuildInputs = [
+              nativeBuildInputs = with pkgs; [
                 uxn
               ];
 
-              src = self;
+              src = pkgs.fetchurl {
+                url = "https://wiki.xxiivv.com/etc/catclock.tal.txt";
+                sha256 = "sha256-yY4QuKKgUKSrCsIiMRBBxajzd94fNnKCGdg18UK0iNE="; # pkgs.lib.fakeSha256;
+              };
+
+              unpackPhase = ''
+                cp $src catclock.tal
+              '';
+
+              patchPhase = ''
+                substituteInPlace catclock.tal \
+                --replace ".theme" "/home/a/.config/uxn/theme"
+              '';
 
               buildPhase = ''
                 uxnasm catclock.tal catclock.rom
